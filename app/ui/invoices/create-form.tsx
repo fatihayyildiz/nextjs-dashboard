@@ -1,4 +1,6 @@
-import { FormEvent } from 'react';
+'use client';
+
+import { useFormState } from 'react-dom';
 import { CustomerField } from '@/app/lib/definitions';
 import Link from 'next/link';
 import {
@@ -9,10 +11,22 @@ import {
 } from '@heroicons/react/24/outline';
 import { Button } from '@/app/ui/button';
 import { createInvoice } from '@/app/lib/actions';
+import { useEffect } from 'react';
 
 export default function Form({ customers }: { customers: CustomerField[] }) {
+  
+  const formData = new FormData();
+  formData.append("customerId", "");
+  formData.append("email", "");
+  formData.append("password", "");
+  const [state, dispatch] = useFormState(createInvoice, formData);
+
+  useEffect(()=>{
+    console.log('state:', state);
+  }, [state]);
+
   return (
-    <form action={createInvoice}>
+    <form action={dispatch}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">
@@ -51,6 +65,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
                 name="amount"
                 type="number"
                 step="0.01"
+                required
                 placeholder="Enter USD amount"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
               />
